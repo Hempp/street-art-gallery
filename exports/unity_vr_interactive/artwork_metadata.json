@@ -1,0 +1,224 @@
+{
+  "artworks": [
+    {
+      "id": 1,
+      "title": "Urban Dreams",
+      "artist": "KAWS",
+      "year": "2023",
+      "description": "Bold colors explore urban identity and street culture",
+      "panel_name": "InfoPanel_1",
+      "hotspot_name": "Hotspot_1",
+      "artwork_name": "Art_1",
+      "texture": "graffiti_1.jpg"
+    },
+    {
+      "id": 2,
+      "title": "Concrete Jungle",
+      "artist": "Banksy",
+      "year": "2022",
+      "description": "Commentary on urban development and nature",
+      "panel_name": "InfoPanel_2",
+      "hotspot_name": "Hotspot_2",
+      "artwork_name": "Art_2",
+      "texture": "graffiti_2.jpg"
+    },
+    {
+      "id": 3,
+      "title": "Neon Nights",
+      "artist": "Shepard Fairey",
+      "year": "2023",
+      "description": "Vibrant exploration of nightlife aesthetics",
+      "panel_name": "InfoPanel_3",
+      "hotspot_name": "Hotspot_3",
+      "artwork_name": "Art_3",
+      "texture": "graffiti_3.jpg"
+    },
+    {
+      "id": 4,
+      "title": "Street Symphony",
+      "artist": "JR",
+      "year": "2021",
+      "description": "Large-scale portrait celebrating community",
+      "panel_name": "InfoPanel_4",
+      "hotspot_name": "Hotspot_4",
+      "artwork_name": "Art_4",
+      "texture": "graffiti_4.jpg"
+    },
+    {
+      "id": 5,
+      "title": "Color Revolution",
+      "artist": "Os Gemeos",
+      "year": "2022",
+      "description": "Brazilian twin artists' signature yellow figures",
+      "panel_name": "InfoPanel_5",
+      "hotspot_name": "Hotspot_5",
+      "artwork_name": "Art_5",
+      "texture": "graffiti_5.jpg"
+    },
+    {
+      "id": 6,
+      "title": "Urban Decay",
+      "artist": "Vhils",
+      "year": "2023",
+      "description": "Carved portrait revealing layers of history",
+      "panel_name": "InfoPanel_6",
+      "hotspot_name": "Hotspot_6",
+      "artwork_name": "Art_6",
+      "texture": "graffiti_6.jpg"
+    },
+    {
+      "id": 7,
+      "title": "Digital Native",
+      "artist": "Felipe Pantone",
+      "year": "2024",
+      "description": "Glitch aesthetics meet street art",
+      "panel_name": "InfoPanel_7",
+      "hotspot_name": "Hotspot_7",
+      "artwork_name": "Art_7",
+      "texture": "graffiti_7.jpg"
+    },
+    {
+      "id": 8,
+      "title": "Wild Style",
+      "artist": "Seen",
+      "year": "2022",
+      "description": "Classic graffiti lettering from the Bronx legend",
+      "panel_name": "InfoPanel_8",
+      "hotspot_name": "Hotspot_8",
+      "artwork_name": "Art_8",
+      "texture": "graffiti_8.jpg"
+    },
+    {
+      "id": 9,
+      "title": "Future Past",
+      "artist": "Futura",
+      "year": "2023",
+      "description": "Abstract expressionism meets aerosol art",
+      "panel_name": "InfoPanel_9",
+      "hotspot_name": "Hotspot_9",
+      "artwork_name": "Art_9",
+      "texture": "graffiti_9.jpg"
+    },
+    {
+      "id": 10,
+      "title": "Street Wisdom",
+      "artist": "Retna",
+      "year": "2022",
+      "description": "Cryptic script inspired by ancient alphabets",
+      "panel_name": "InfoPanel_10",
+      "hotspot_name": "Hotspot_10",
+      "artwork_name": "Art_10",
+      "texture": "graffiti_10.jpg"
+    },
+    {
+      "id": 11,
+      "title": "Pop Underground",
+      "artist": "D*Face",
+      "year": "2023",
+      "description": "Pop art meets punk rock rebellion",
+      "panel_name": "InfoPanel_11",
+      "hotspot_name": "Hotspot_11",
+      "artwork_name": "Art_11",
+      "texture": "graffiti_11.jpg"
+    },
+    {
+      "id": 12,
+      "title": "Nature Reclaims",
+      "artist": "ROA",
+      "year": "2021",
+      "description": "Monumental wildlife on urban surfaces",
+      "panel_name": "InfoPanel_12",
+      "hotspot_name": "Hotspot_12",
+      "artwork_name": "Art_12",
+      "texture": "graffiti_12.jpg"
+    },
+    {
+      "id": 13,
+      "title": "Light & Shadow",
+      "artist": "C215",
+      "year": "2024",
+      "description": "Stencil portraits with emotional depth",
+      "panel_name": "InfoPanel_13",
+      "hotspot_name": "Hotspot_13",
+      "artwork_name": "Art_13",
+      "texture": "graffiti_13.jpg"
+    },
+    {
+      "id": 14,
+      "title": "Urban Mythology",
+      "artist": "Aryz",
+      "year": "2023",
+      "description": "Surreal figures in architectural scale",
+      "panel_name": "InfoPanel_14",
+      "hotspot_name": "Hotspot_14",
+      "artwork_name": "Art_14",
+      "texture": "graffiti_14.jpg"
+    },
+    {
+      "id": 15,
+      "title": "Street Canvas",
+      "artist": "Okuda",
+      "year": "2022",
+      "description": "Geometric multicolor spiritual iconography",
+      "panel_name": "InfoPanel_15",
+      "hotspot_name": "Hotspot_15",
+      "artwork_name": "Art_15",
+      "texture": "graffiti_15.jpg"
+    },
+    {
+      "id": 16,
+      "title": "Rebel Art",
+      "artist": "Swoon",
+      "year": "2023",
+      "description": "Wheatpaste portraits of everyday heroes",
+      "panel_name": "InfoPanel_16",
+      "hotspot_name": "Hotspot_16",
+      "artwork_name": "Art_16",
+      "texture": "graffiti_16.jpg"
+    },
+    {
+      "id": 17,
+      "title": "City Pulse",
+      "artist": "Kobra",
+      "year": "2024",
+      "description": "Kaleidoscopic portraits of cultural icons",
+      "panel_name": "InfoPanel_17",
+      "hotspot_name": "Hotspot_17",
+      "artwork_name": "Art_17",
+      "texture": "graffiti_17.jpg"
+    },
+    {
+      "id": 18,
+      "title": "Raw Expression",
+      "artist": "Blu",
+      "year": "2022",
+      "description": "Political murals with global commentary",
+      "panel_name": "InfoPanel_18",
+      "hotspot_name": "Hotspot_18",
+      "artwork_name": "Art_18",
+      "texture": "graffiti_18.jpg"
+    },
+    {
+      "id": 19,
+      "title": "Urban Poetry",
+      "artist": "Faith47",
+      "year": "2023",
+      "description": "Lyrical imagery addressing social issues",
+      "panel_name": "InfoPanel_19",
+      "hotspot_name": "Hotspot_19",
+      "artwork_name": "Art_19",
+      "texture": "graffiti_19.jpg"
+    },
+    {
+      "id": 20,
+      "title": "Street Legacy",
+      "artist": "Crash",
+      "year": "2024",
+      "description": "Graffiti pioneer's contemporary evolution",
+      "panel_name": "InfoPanel_20",
+      "hotspot_name": "Hotspot_20",
+      "artwork_name": "Art_20",
+      "texture": "graffiti_20.jpg"
+    }
+  ]
+}
