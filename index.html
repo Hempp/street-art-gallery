@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VR Street Art Gallery | Experience Art in Virtual Reality</title>
+    <meta name="description" content="Step into the world's first social VR street art gallery. Experience KAWS, Banksy, Shepard Fairey and more with friends in immersive virtual reality.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="VR Street Art Gallery">
+    <meta property="og:description" content="Experience iconic street art in social VR. Walk through galleries with friends.">
+    <meta property="og:image" content="https://hempp.github.io/street-art-gallery/gallery_art_preview.png">
+    <meta property="og:url" content="https://hempp.github.io/street-art-gallery">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="VR Street Art Gallery">
+    <meta name="twitter:description" content="Experience iconic street art in social VR.">
+    <meta name="twitter:image" content="https://hempp.github.io/street-art-gallery/gallery_art_preview.png">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'gallery-dark': '#0a0a0a',
+                        'gallery-gray': '#1a1a1a',
+                        'gallery-accent': '#ff3366',
+                        'gallery-purple': '#8b5cf6',
+                        'gallery-cyan': '#06b6d4',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #ff3366 0%, #8b5cf6 50%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .gradient-border {
+            background: linear-gradient(135deg, #ff3366, #8b5cf6, #06b6d4);
+            padding: 2px;
+            border-radius: 12px;
+        }
+        .gradient-border-inner {
+            background: #1a1a1a;
+            border-radius: 10px;
+            height: 100%;
+        }
+        .glow {
+            box-shadow: 0 0 60px rgba(139, 92, 246, 0.3);
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        .float {
+            animation: float 3s ease-in-out infinite;
+        }
+        .video-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+        }
+        .video-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(10,10,10,0.8) 0%, transparent 50%);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-gallery-dark text-white">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-gallery-dark/80 backdrop-blur-lg border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-gallery-accent to-gallery-purple"></div>
+                    <span class="font-bold text-xl">VR Street Art</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-gray-400 hover:text-white transition">Features</a>
+                    <a href="#artists" class="text-gray-400 hover:text-white transition">Artists</a>
+                    <a href="#pricing" class="text-gray-400 hover:text-white transition">Pricing</a>
+                    <a href="#waitlist" class="px-5 py-2 bg-gallery-accent hover:bg-gallery-accent/90 rounded-full font-medium transition">
+                        Join Waitlist
+                    </a>
+                </div>
+                <button class="md:hidden text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center max-w-4xl mx-auto mb-12">
+                <div class="inline-flex items-center px-4 py-2 bg-gallery-gray rounded-full text-sm text-gray-400 mb-8">
+                    <span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+                    Now in Early Access
+                </div>
+                <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+                    Experience Street Art in
+                    <span class="gradient-text">Virtual Reality</span>
+                </h1>
+                <p class="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
+                    Walk through immersive galleries featuring KAWS, Banksy, Shepard Fairey and 20+ legendary artists.
+                    Explore with friends in social VR.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="#waitlist" class="px-8 py-4 bg-gallery-accent hover:bg-gallery-accent/90 rounded-full font-semibold text-lg transition transform hover:scale-105">
+                        Join the Waitlist
+                    </a>
+                    <a href="#preview" class="px-8 py-4 bg-gallery-gray hover:bg-white/10 rounded-full font-semibold text-lg transition flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/>
+                        </svg>
+                        Watch Preview
+                    </a>
+                </div>
+            </div>
+
+            <!-- Video Preview -->
+            <div id="preview" class="relative max-w-5xl mx-auto">
+                <div class="gradient-border glow">
+                    <div class="video-container bg-gallery-gray">
+                        <video
+                            autoplay
+                            loop
+                            muted
+                            playsinline
+                            class="w-full rounded-xl"
+                            poster="../gallery_art_preview.png"
+                        >
+                            <source src="../gallery_walkthrough_art.mp4" type="video/mp4">
+                            <img src="../gallery_art_preview.png" alt="VR Street Art Gallery Preview" class="w-full rounded-xl">
+                        </video>
+                        <div class="video-overlay"></div>
+                    </div>
+                </div>
+                <!-- Floating badges -->
+                <div class="absolute -left-4 top-1/4 bg-gallery-gray border border-white/10 rounded-xl px-4 py-3 float hidden lg:block">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gallery-purple/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-gallery-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="font-semibold">Social VR</div>
+                            <div class="text-sm text-gray-500">Explore with friends</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="absolute -right-4 bottom-1/4 bg-gallery-gray border border-white/10 rounded-xl px-4 py-3 float hidden lg:block" style="animation-delay: 1s;">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gallery-cyan/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-gallery-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="font-semibold">20+ Artworks</div>
+                            <div class="text-sm text-gray-500">World-class artists</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Logos / Social Proof -->
+    <section class="py-12 border-y border-white/5">
+        <div class="max-w-7xl mx-auto px-6">
+            <p class="text-center text-gray-500 mb-8">Featuring artwork from legendary street artists</p>
+            <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-60">
+                <span class="text-2xl font-bold tracking-wider">KAWS</span>
+                <span class="text-2xl font-bold tracking-wider">BANKSY</span>
+                <span class="text-2xl font-bold tracking-wider">OBEY</span>
+                <span class="text-2xl font-bold tracking-wider">JR</span>
+                <span class="text-2xl font-bold tracking-wider">INVADER</span>
+                <span class="text-2xl font-bold tracking-wider">VHILS</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-24 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    More Than a <span class="gradient-text">Gallery</span>
+                </h2>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto">
+                    A full social experience where art lovers connect, explore, and collect together.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Feature 1 -->
+                <div class="bg-gallery-gray border border-white/5 rounded-2xl p-8 card-hover">
+                    <div class="w-14 h-14 bg-gallery-accent/10 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-gallery-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Immersive VR Experience</h3>
+                    <p class="text-gray-400">Full 6DOF movement with teleportation and smooth locomotion. Comfort settings for all users.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="bg-gallery-gray border border-white/5 rounded-2xl p-8 card-hover">
+                    <div class="w-14 h-14 bg-gallery-purple/10 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-gallery-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Multiplayer Social</h3>
+                    <p class="text-gray-400">Explore galleries with friends. Spatial voice chat fades naturally with distance.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="bg-gallery-gray border border-white/5 rounded-2xl p-8 card-hover">
+                    <div class="w-14 h-14 bg-gallery-cyan/10 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-gallery-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Custom Avatars</h3>
+                    <p class="text-gray-400">Express yourself with customizable body types, outfits, accessories, and colors.</p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="bg-gallery-gray border border-white/5 rounded-2xl p-8 card-hover">
+                    <div class="w-14 h-14 bg-green-500/10 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Emotes & Reactions</h3>
+                    <p class="text-gray-400">Wave, dance, clap, and more. Express yourself with 8+ animated emotes.</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="bg-gallery-gray border border-white/5 rounded-2xl p-8 card-hover">
+                    <div class="w-14 h-14 bg-yellow-500/10 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Interactive Hotspots</h3>
+                    <p class="text-gray-400">Learn about each artwork with info panels. Guided tour mode with narration.</p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="bg-gallery-gray border border-white/5 rounded-2xl p-8 card-hover">
+                    <div class="w-14 h-14 bg-pink-500/10 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Spatial Audio</h3>
+                    <p class="text-gray-400">Immersive 3D soundscape with ambient zones. Voice chat that feels natural.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Artists Section -->
+    <section id="artists" class="py-24 px-6 bg-gallery-gray/50">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    World-Class <span class="gradient-text">Artists</span>
+                </h2>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto">
+                    Curated collection from the most influential street artists of our generation.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-gallery-dark border border-white/5 rounded-xl p-6 text-center card-hover">
+                    <div class="text-3xl font-bold gradient-text mb-2">KAWS</div>
+                    <p class="text-sm text-gray-500">Pop Art Icons</p>
+                </div>
+                <div class="bg-gallery-dark border border-white/5 rounded-xl p-6 text-center card-hover">
+                    <div class="text-3xl font-bold gradient-text mb-2">Banksy</div>
+                    <p class="text-sm text-gray-500">Political Stencils</p>
+                </div>
+                <div class="bg-gallery-dark border border-white/5 rounded-xl p-6 text-center card-hover">
+                    <div class="text-3xl font-bold gradient-text mb-2">Shepard Fairey</div>
+                    <p class="text-sm text-gray-500">OBEY / Propaganda</p>
+                </div>
+                <div class="bg-gallery-dark border border-white/5 rounded-xl p-6 text-center card-hover">
+                    <div class="text-3xl font-bold gradient-text mb-2">JR</div>
+                    <p class="text-sm text-gray-500">Large-Scale Photo</p>
+                </div>
+                <div class="bg-gallery-dark border border-white/5 rounded-xl p-6 text-center card-hover">
+                    <div class="text-3xl font-bold gradient-text mb-2">Os Gemeos</div>
+                    <p class="text-sm text-gray-500">Brazilian Masters</p>
+                </div>
+                <div class="bg-gallery-dark border border-white/5 rounded-xl p-6 text-center card-hover">
+                    <div class="text-3xl font-bold gradient-text mb-2">Vhils</div>
+                    <p class="text-sm text-gray-500">Carved Murals</p>
+                </div>
+                <div class="bg-gallery-dark border border-white/5 rounded-xl p-6 text-center card-hover">
+                    <div class="text-3xl font-bold gradient-text mb-2">Invader</div>
+                    <p class="text-sm text-gray-500">Pixel Art</p>
+                </div>
+                <div class="bg-gallery-dark border border-white/5 rounded-xl p-6 text-center card-hover">
+                    <div class="text-3xl font-bold gradient-text mb-2">+13 More</div>
+                    <p class="text-sm text-gray-500">Growing Collection</p>
+                </div>
+            </div>
+
+            <!-- Artist CTA -->
+            <div class="mt-16 text-center">
+                <div class="inline-block bg-gallery-dark border border-white/10 rounded-2xl p-8 max-w-xl">
+                    <h3 class="text-2xl font-bold mb-3">Are you an artist?</h3>
+                    <p class="text-gray-400 mb-6">Join our platform and showcase your work to thousands of VR art enthusiasts. 70/30 revenue share on sales.</p>
+                    <a href="#" class="inline-flex items-center gap-2 px-6 py-3 bg-white text-black rounded-full font-semibold hover:bg-gray-200 transition">
+                        Apply as Artist
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-24 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    Simple <span class="gradient-text">Pricing</span>
+                </h2>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto">
+                    Start free, upgrade when you're ready for the full experience.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Free Tier -->
+                <div class="bg-gallery-gray border border-white/5 rounded-2xl p-8">
+                    <div class="text-sm text-gray-500 font-medium mb-2">FREE</div>
+                    <div class="text-4xl font-bold mb-1">$0</div>
+                    <div class="text-gray-500 mb-6">Forever free</div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Browse all galleries
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            1 basic avatar
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Public rooms
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-500">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                            No private rooms
+                        </li>
+                    </ul>
+                    <a href="#waitlist" class="block w-full py-3 text-center border border-white/20 rounded-full font-semibold hover:bg-white/5 transition">
+                        Get Started
+                    </a>
+                </div>
+
+                <!-- Premium Tier -->
+                <div class="gradient-border">
+                    <div class="gradient-border-inner p-8 h-full flex flex-col">
+                        <div class="text-sm text-gallery-accent font-medium mb-2">PREMIUM</div>
+                        <div class="text-4xl font-bold mb-1">$9.99</div>
+                        <div class="text-gray-500 mb-6">per month</div>
+                        <ul class="space-y-3 mb-8 flex-grow">
+                            <li class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Everything in Free
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Unlimited avatars
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Private gallery rooms
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Early access exhibitions
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                Virtual art collecting
+                            </li>
+                        </ul>
+                        <a href="#waitlist" class="block w-full py-3 text-center bg-gallery-accent rounded-full font-semibold hover:bg-gallery-accent/90 transition">
+                            Join Waitlist
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Creator Tier -->
+                <div class="bg-gallery-gray border border-white/5 rounded-2xl p-8">
+                    <div class="text-sm text-gallery-purple font-medium mb-2">CREATOR</div>
+                    <div class="text-4xl font-bold mb-1">$29.99</div>
+                    <div class="text-gray-500 mb-6">per month</div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Everything in Premium
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Host exhibitions
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Sell virtual art
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Analytics dashboard
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Custom gallery spaces
+                        </li>
+                    </ul>
+                    <a href="#waitlist" class="block w-full py-3 text-center border border-white/20 rounded-full font-semibold hover:bg-white/5 transition">
+                        Join Waitlist
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Waitlist Section -->
+    <section id="waitlist" class="py-24 px-6 bg-gallery-gray/50">
+        <div class="max-w-3xl mx-auto text-center">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                Get <span class="gradient-text">Early Access</span>
+            </h2>
+            <p class="text-xl text-gray-400 mb-10">
+                Join the waitlist for exclusive early access, updates, and founding member benefits.
+            </p>
+
+            <form id="waitlist-form" class="max-w-md mx-auto">
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="Enter your email"
+                        required
+                        class="flex-1 px-6 py-4 bg-gallery-dark border border-white/10 rounded-full text-white placeholder-gray-500 focus:outline-none focus:border-gallery-accent transition"
+                    >
+                    <button
+                        type="submit"
+                        class="px-8 py-4 bg-gallery-accent hover:bg-gallery-accent/90 rounded-full font-semibold transition transform hover:scale-105 whitespace-nowrap"
+                    >
+                        Join Waitlist
+                    </button>
+                </div>
+                <p class="text-sm text-gray-500 mt-4">No spam, ever. Unsubscribe anytime.</p>
+            </form>
+
+            <div id="success-message" class="hidden mt-8 p-6 bg-green-500/10 border border-green-500/20 rounded-xl">
+                <svg class="w-12 h-12 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <h3 class="text-xl font-semibold mb-2">You're on the list!</h3>
+                <p class="text-gray-400">We'll notify you when early access begins.</p>
+            </div>
+
+            <!-- Social Proof -->
+            <div class="mt-12 flex items-center justify-center gap-4">
+                <div class="flex -space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-purple-500 border-2 border-gallery-gray"></div>
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 border-2 border-gallery-gray"></div>
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 border-2 border-gallery-gray"></div>
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-yellow-500 border-2 border-gallery-gray"></div>
+                </div>
+                <p class="text-gray-400">
+                    <span class="text-white font-semibold" id="waitlist-count">247</span> people on the waitlist
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Platforms Section -->
+    <section class="py-16 px-6 border-t border-white/5">
+        <div class="max-w-7xl mx-auto text-center">
+            <p class="text-gray-500 mb-8">Available on your favorite VR platforms</p>
+            <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16">
+                <div class="flex items-center gap-3 text-gray-400">
+                    <svg class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    <span class="font-medium">Meta Quest</span>
+                </div>
+                <div class="flex items-center gap-3 text-gray-400">
+                    <svg class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    <span class="font-medium">SteamVR</span>
+                </div>
+                <div class="flex items-center gap-3 text-gray-400">
+                    <svg class="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                    <span class="font-medium">PC VR</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 border-t border-white/5">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-8">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-gallery-accent to-gallery-purple"></div>
+                    <span class="font-bold text-xl">VR Street Art</span>
+                </div>
+                <div class="flex items-center gap-8">
+                    <a href="https://github.com/Hempp/street-art-gallery" target="_blank" class="text-gray-400 hover:text-white transition">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
+                        </svg>
+                    </a>
+                </div>
+                <p class="text-gray-500 text-sm">
+                    &copy; 2026 VR Street Art Gallery. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Waitlist form handling
+        const form = document.getElementById('waitlist-form');
+        const successMessage = document.getElementById('success-message');
+        const waitlistCount = document.getElementById('waitlist-count');
+
+        // Simulate loading existing count
+        let count = 247 + Math.floor(Math.random() * 50);
+        waitlistCount.textContent = count;
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+
+            // Store in localStorage (for demo - replace with actual backend)
+            const waitlist = JSON.parse(localStorage.getItem('waitlist') || '[]');
+            if (!waitlist.includes(email)) {
+                waitlist.push(email);
+                localStorage.setItem('waitlist', JSON.stringify(waitlist));
+            }
+
+            // Show success message
+            form.classList.add('hidden');
+            successMessage.classList.remove('hidden');
+
+            // Update count
+            count++;
+            waitlistCount.textContent = count;
+
+            // Log for demo purposes
+            console.log('Email submitted:', email);
+            console.log('Total waitlist:', waitlist);
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('bg-gallery-dark/95');
+            } else {
+                nav.classList.remove('bg-gallery-dark/95');
+            }
+        });
+    </script>
+</body>
+</html>
