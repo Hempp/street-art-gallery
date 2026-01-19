@@ -448,9 +448,13 @@
                                 Virtual art collecting
                             </li>
                         </ul>
-                        <a href="#waitlist" class="block w-full py-3 text-center bg-gallery-accent rounded-full font-semibold hover:bg-gallery-accent/90 transition">
-                            Join Waitlist
-                        </a>
+                        <button
+                            onclick="handleCheckout('premium')"
+                            class="block w-full py-3 text-center bg-gallery-accent rounded-full font-semibold hover:bg-gallery-accent/90 transition disabled:opacity-50"
+                            id="premium-btn"
+                        >
+                            Subscribe - $9.99/mo
+                        </button>
                     </div>
                 </div>
 
@@ -491,9 +495,13 @@
                             Custom gallery spaces
                         </li>
                     </ul>
-                    <a href="#waitlist" class="block w-full py-3 text-center border border-white/20 rounded-full font-semibold hover:bg-white/5 transition">
-                        Join Waitlist
-                    </a>
+                    <button
+                        onclick="handleCheckout('creator')"
+                        class="block w-full py-3 text-center border border-white/20 rounded-full font-semibold hover:bg-white/5 transition disabled:opacity-50"
+                        id="creator-btn"
+                    >
+                        Subscribe - $29.99/mo
+                    </button>
                 </div>
             </div>
         </div>
@@ -800,6 +808,114 @@
                 window.history.replaceState({}, '', url);
             });
         });
+
+        // ============================================
+        // STRIPE CHECKOUT CONFIGURATION
+        // Replace these with your Stripe Payment Links or Price IDs
+        // ============================================
+        const STRIPE_CONFIG = {
+            // Option 1: Payment Links (easiest - no auth required)
+            // Create these at: https://dashboard.stripe.com/payment-links
+            paymentLinks: {
+                premium: 'YOUR_PREMIUM_PAYMENT_LINK',  // e.g., 'https://buy.stripe.com/xxx'
+                creator: 'YOUR_CREATOR_PAYMENT_LINK'   // e.g., 'https://buy.stripe.com/yyy'
+            },
+            // Option 2: Price IDs (for authenticated checkout via Edge Function)
+            priceIds: {
+                premium: 'YOUR_PREMIUM_PRICE_ID',  // e.g., 'price_xxx'
+                creator: 'YOUR_CREATOR_PRICE_ID'   // e.g., 'price_yyy'
+            },
+            // Success and cancel URLs
+            successUrl: window.location.origin + '/success.html',
+            cancelUrl: window.location.origin + '/#pricing'
+        };
+
+        // ============================================
+        // STRIPE CHECKOUT HANDLER
+        // ============================================
+        async function handleCheckout(tier) {
+            const btn = document.getElementById(`${tier}-btn`);
+
+            // Show loading state
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = `
+                    <svg class="animate-spin h-5 w-5 inline mr-2" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                    </svg>
+                    Processing...
+                `;
+            }
+
+            try {
+                // Check if Payment Links are configured
+                const paymentLink = STRIPE_CONFIG.paymentLinks[tier];
+
+                if (paymentLink && !paymentLink.includes('YOUR_')) {
+                    // Use Payment Links (simplest approach)
+                    window.location.href = paymentLink;
+                    return;
+                }
+
+                // Check if Price IDs are configured for Edge Function checkout
+                const priceId = STRIPE_CONFIG.priceIds[tier];
+
+                if (priceId && !priceId.includes('YOUR_') && SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
+                    // Use Edge Function for authenticated checkout
+                    const { data: { session } } = await supabase.auth.getSession();
+
+                    if (!session) {
+                        // User not logged in - redirect to auth or show modal
+                        showError('Please sign in to subscribe');
+                        // Optionally redirect to login: window.location.href = '/login';
+                        return;
+                    }
+
+                    // Call Edge Function to create checkout session
+                    const response = await fetch(`${SUPABASE_URL}/functions/v1/create-checkout-session`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${session.access_token}`
+                        },
+                        body: JSON.stringify({
+                            priceId: priceId,
+                            successUrl: STRIPE_CONFIG.successUrl + `?tier=${tier}`,
+                            cancelUrl: STRIPE_CONFIG.cancelUrl
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+
+                    // Redirect to Stripe Checkout
+                    if (data.url) {
+                        window.location.href = data.url;
+                    }
+                } else {
+                    // Not configured - show setup message
+                    console.log('Stripe not configured. Tier selected:', tier);
+                    showError('Payments coming soon! Join the waitlist for updates.');
+
+                    // Scroll to waitlist
+                    document.getElementById('waitlist').scrollIntoView({ behavior: 'smooth' });
+                }
+            } catch (err) {
+                console.error('Checkout error:', err);
+                showError('Unable to process. Please try again.');
+            } finally {
+                // Reset button state
+                if (btn) {
+                    btn.disabled = false;
+                    const price = tier === 'premium' ? '$9.99' : '$29.99';
+                    btn.textContent = `Subscribe - ${price}/mo`;
+                }
+            }
+        }
     </script>
 </body>
 </html>
