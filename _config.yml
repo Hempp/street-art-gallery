@@ -1,0 +1,13 @@
+title: VR Street Art Gallery
+description: Social VR gallery experience with multiplayer, customizable avatars, emotes, and voice chat. Built for Unity with XR Interaction Toolkit.
+remote_theme: pages-themes/cayman@v0.2.0
+
+# Site settings
+show_downloads: true
+google_analytics:
+
+# Repository info
+repository: Hempp/street-art-gallery
+
+plugins:
+  - jekyll-remote-theme
