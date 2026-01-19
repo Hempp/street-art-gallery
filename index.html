@@ -109,9 +109,38 @@
                     <a href="#features" class="text-gray-400 hover:text-white transition">Features</a>
                     <a href="#artists" class="text-gray-400 hover:text-white transition">Artists</a>
                     <a href="#pricing" class="text-gray-400 hover:text-white transition">Pricing</a>
-                    <a href="#waitlist" class="px-5 py-2 bg-gallery-accent hover:bg-gallery-accent/90 rounded-full font-medium transition">
-                        Join Waitlist
-                    </a>
+
+                    <!-- Auth Buttons (shown when logged out) -->
+                    <div id="auth-buttons" class="flex items-center space-x-4">
+                        <button onclick="openAuthModal('login')" class="text-gray-400 hover:text-white transition">
+                            Sign In
+                        </button>
+                        <button onclick="openAuthModal('signup')" class="px-5 py-2 bg-gallery-accent hover:bg-gallery-accent/90 rounded-full font-medium transition">
+                            Get Started
+                        </button>
+                    </div>
+
+                    <!-- User Menu (shown when logged in) -->
+                    <div id="user-menu" class="hidden relative">
+                        <button onclick="toggleUserDropdown()" class="flex items-center space-x-2 text-gray-400 hover:text-white transition">
+                            <div id="user-avatar" class="w-8 h-8 rounded-full bg-gradient-to-br from-gallery-accent to-gallery-purple flex items-center justify-center text-sm font-medium">
+                                U
+                            </div>
+                            <span id="user-name" class="hidden lg:inline">User</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-gallery-gray border border-white/10 rounded-xl shadow-xl py-2 z-50">
+                            <div class="px-4 py-2 border-b border-white/10">
+                                <div id="dropdown-email" class="text-sm text-gray-400 truncate">user@email.com</div>
+                                <div id="dropdown-tier" class="text-xs text-gallery-accent">Free Plan</div>
+                            </div>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-white/5 transition">My Profile</a>
+                            <a href="#" onclick="openCustomerPortal()" class="block px-4 py-2 text-sm text-gray-300 hover:bg-white/5 transition">Manage Subscription</a>
+                            <button onclick="handleSignOut()" class="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-white/5 transition">Sign Out</button>
+                        </div>
+                    </div>
                 </div>
                 <button class="md:hidden text-white">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -586,6 +615,169 @@
         </div>
     </section>
 
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="fixed inset-0 z-50 hidden">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeAuthModal()"></div>
+
+        <!-- Modal Content -->
+        <div class="relative flex items-center justify-center min-h-screen p-4">
+            <div class="bg-gallery-gray border border-white/10 rounded-2xl w-full max-w-md p-8 relative">
+                <!-- Close Button -->
+                <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+
+                <!-- Logo -->
+                <div class="flex items-center justify-center space-x-2 mb-6">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-gallery-accent to-gallery-purple"></div>
+                    <span class="font-bold text-2xl">VR Street Art</span>
+                </div>
+
+                <!-- Tab Switcher -->
+                <div class="flex bg-gallery-dark rounded-full p-1 mb-6">
+                    <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 py-2 px-4 rounded-full text-sm font-medium transition bg-gallery-accent text-white">
+                        Sign In
+                    </button>
+                    <button id="tab-signup" onclick="switchAuthTab('signup')" class="flex-1 py-2 px-4 rounded-full text-sm font-medium transition text-gray-400 hover:text-white">
+                        Create Account
+                    </button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Email</label>
+                        <input
+                            type="email"
+                            id="login-email"
+                            required
+                            class="w-full px-4 py-3 bg-gallery-dark border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-gallery-accent transition"
+                            placeholder="you@example.com"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Password</label>
+                        <input
+                            type="password"
+                            id="login-password"
+                            required
+                            minlength="6"
+                            class="w-full px-4 py-3 bg-gallery-dark border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-gallery-accent transition"
+                            placeholder="••••••••"
+                        >
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <label class="flex items-center gap-2 text-gray-400 cursor-pointer">
+                            <input type="checkbox" class="rounded bg-gallery-dark border-white/10">
+                            Remember me
+                        </label>
+                        <button type="button" onclick="handleForgotPassword()" class="text-gallery-accent hover:underline">
+                            Forgot password?
+                        </button>
+                    </div>
+                    <button
+                        type="submit"
+                        id="login-btn"
+                        class="w-full py-3 bg-gallery-accent hover:bg-gallery-accent/90 rounded-xl font-semibold transition"
+                    >
+                        Sign In
+                    </button>
+                </form>
+
+                <!-- Signup Form -->
+                <form id="signup-form" class="space-y-4 hidden">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Full Name</label>
+                        <input
+                            type="text"
+                            id="signup-name"
+                            required
+                            class="w-full px-4 py-3 bg-gallery-dark border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-gallery-accent transition"
+                            placeholder="John Doe"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Email</label>
+                        <input
+                            type="email"
+                            id="signup-email"
+                            required
+                            class="w-full px-4 py-3 bg-gallery-dark border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-gallery-accent transition"
+                            placeholder="you@example.com"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Password</label>
+                        <input
+                            type="password"
+                            id="signup-password"
+                            required
+                            minlength="6"
+                            class="w-full px-4 py-3 bg-gallery-dark border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-gallery-accent transition"
+                            placeholder="••••••••"
+                        >
+                        <p class="text-xs text-gray-500 mt-1">Minimum 6 characters</p>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <input type="checkbox" id="signup-terms" required class="mt-1 rounded bg-gallery-dark border-white/10">
+                        <label for="signup-terms" class="text-sm text-gray-400">
+                            I agree to the <a href="#" class="text-gallery-accent hover:underline">Terms of Service</a> and <a href="#" class="text-gallery-accent hover:underline">Privacy Policy</a>
+                        </label>
+                    </div>
+                    <button
+                        type="submit"
+                        id="signup-btn"
+                        class="w-full py-3 bg-gallery-accent hover:bg-gallery-accent/90 rounded-xl font-semibold transition"
+                    >
+                        Create Account
+                    </button>
+                </form>
+
+                <!-- Divider -->
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-white/10"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-4 bg-gallery-gray text-gray-500">or continue with</span>
+                    </div>
+                </div>
+
+                <!-- Social Login -->
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="handleSocialLogin('google')" class="flex items-center justify-center gap-2 py-3 bg-gallery-dark hover:bg-white/5 border border-white/10 rounded-xl transition">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        <span class="text-sm">Google</span>
+                    </button>
+                    <button onclick="handleSocialLogin('discord')" class="flex items-center justify-center gap-2 py-3 bg-gallery-dark hover:bg-white/5 border border-white/10 rounded-xl transition">
+                        <svg class="w-5 h-5" fill="#5865F2" viewBox="0 0 24 24">
+                            <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
+                        </svg>
+                        <span class="text-sm">Discord</span>
+                    </button>
+                </div>
+
+                <!-- Error Message -->
+                <div id="auth-error" class="hidden mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm text-center">
+                    Error message here
+                </div>
+
+                <!-- Success Message -->
+                <div id="auth-success" class="hidden mt-4 p-3 bg-green-500/10 border border-green-500/20 rounded-xl text-green-400 text-sm text-center">
+                    Success message here
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="py-12 px-6 border-t border-white/5">
         <div class="max-w-7xl mx-auto">
@@ -632,6 +824,366 @@
 
         // Initialize Supabase client
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Current user state
+        let currentUser = null;
+        let currentProfile = null;
+
+        // ============================================
+        // AUTH STATE MANAGEMENT
+        // ============================================
+        async function initAuth() {
+            // Check for existing session
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                await handleAuthStateChange('SIGNED_IN', session);
+            }
+
+            // Listen for auth state changes
+            supabase.auth.onAuthStateChange(async (event, session) => {
+                await handleAuthStateChange(event, session);
+            });
+        }
+
+        async function handleAuthStateChange(event, session) {
+            console.log('Auth state changed:', event);
+
+            if (event === 'SIGNED_IN' && session) {
+                currentUser = session.user;
+                await fetchUserProfile();
+                updateUIForAuthenticatedUser();
+                closeAuthModal();
+            } else if (event === 'SIGNED_OUT') {
+                currentUser = null;
+                currentProfile = null;
+                updateUIForUnauthenticatedUser();
+            }
+        }
+
+        async function fetchUserProfile() {
+            if (!currentUser) return;
+
+            try {
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', currentUser.id)
+                    .single();
+
+                if (error) throw error;
+                currentProfile = data;
+            } catch (err) {
+                console.error('Error fetching profile:', err);
+                // Profile might not exist yet, create it
+                currentProfile = {
+                    id: currentUser.id,
+                    email: currentUser.email,
+                    tier: 'free'
+                };
+            }
+        }
+
+        function updateUIForAuthenticatedUser() {
+            // Hide auth buttons, show user menu
+            document.getElementById('auth-buttons').classList.add('hidden');
+            document.getElementById('user-menu').classList.remove('hidden');
+
+            // Update user info
+            const email = currentUser?.email || 'User';
+            const name = currentProfile?.display_name || currentProfile?.full_name || email.split('@')[0];
+            const tier = currentProfile?.tier || 'free';
+            const avatarUrl = currentProfile?.avatar_url;
+
+            document.getElementById('user-name').textContent = name;
+            document.getElementById('dropdown-email').textContent = email;
+            document.getElementById('dropdown-tier').textContent = tier.charAt(0).toUpperCase() + tier.slice(1) + ' Plan';
+
+            // Update avatar
+            const avatarEl = document.getElementById('user-avatar');
+            if (avatarUrl) {
+                avatarEl.innerHTML = `<img src="${avatarUrl}" alt="${name}" class="w-full h-full rounded-full object-cover">`;
+            } else {
+                avatarEl.textContent = name.charAt(0).toUpperCase();
+            }
+        }
+
+        function updateUIForUnauthenticatedUser() {
+            // Show auth buttons, hide user menu
+            document.getElementById('auth-buttons').classList.remove('hidden');
+            document.getElementById('user-menu').classList.add('hidden');
+            document.getElementById('user-dropdown').classList.add('hidden');
+        }
+
+        // Initialize auth on page load
+        if (SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
+            initAuth();
+        }
+
+        // ============================================
+        // AUTH MODAL FUNCTIONS
+        // ============================================
+        function openAuthModal(tab = 'login') {
+            document.getElementById('auth-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            switchAuthTab(tab);
+            hideAuthMessages();
+        }
+
+        function closeAuthModal() {
+            document.getElementById('auth-modal').classList.add('hidden');
+            document.body.style.overflow = '';
+            hideAuthMessages();
+        }
+
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            const loginTab = document.getElementById('tab-login');
+            const signupTab = document.getElementById('tab-signup');
+
+            hideAuthMessages();
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+                loginTab.classList.add('bg-gallery-accent', 'text-white');
+                loginTab.classList.remove('text-gray-400');
+                signupTab.classList.remove('bg-gallery-accent', 'text-white');
+                signupTab.classList.add('text-gray-400');
+            } else {
+                signupForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+                signupTab.classList.add('bg-gallery-accent', 'text-white');
+                signupTab.classList.remove('text-gray-400');
+                loginTab.classList.remove('bg-gallery-accent', 'text-white');
+                loginTab.classList.add('text-gray-400');
+            }
+        }
+
+        function showAuthError(message) {
+            const errorEl = document.getElementById('auth-error');
+            errorEl.textContent = message;
+            errorEl.classList.remove('hidden');
+            document.getElementById('auth-success').classList.add('hidden');
+        }
+
+        function showAuthSuccess(message) {
+            const successEl = document.getElementById('auth-success');
+            successEl.textContent = message;
+            successEl.classList.remove('hidden');
+            document.getElementById('auth-error').classList.add('hidden');
+        }
+
+        function hideAuthMessages() {
+            document.getElementById('auth-error').classList.add('hidden');
+            document.getElementById('auth-success').classList.add('hidden');
+        }
+
+        // ============================================
+        // LOGIN HANDLER
+        // ============================================
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            const btn = document.getElementById('login-btn');
+
+            btn.disabled = true;
+            btn.innerHTML = '<svg class="animate-spin h-5 w-5 inline mr-2" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Signing in...';
+
+            try {
+                if (SUPABASE_URL === 'YOUR_SUPABASE_URL') {
+                    // Demo mode
+                    showAuthSuccess('Demo mode: Configure Supabase to enable real authentication');
+                    setTimeout(closeAuthModal, 2000);
+                    return;
+                }
+
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email,
+                    password
+                });
+
+                if (error) throw error;
+
+                showAuthSuccess('Welcome back!');
+            } catch (err) {
+                console.error('Login error:', err);
+                showAuthError(err.message || 'Invalid email or password');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Sign In';
+            }
+        });
+
+        // ============================================
+        // SIGNUP HANDLER
+        // ============================================
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('signup-name').value.trim();
+            const email = document.getElementById('signup-email').value.trim();
+            const password = document.getElementById('signup-password').value;
+            const btn = document.getElementById('signup-btn');
+
+            btn.disabled = true;
+            btn.innerHTML = '<svg class="animate-spin h-5 w-5 inline mr-2" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Creating account...';
+
+            try {
+                if (SUPABASE_URL === 'YOUR_SUPABASE_URL') {
+                    // Demo mode
+                    showAuthSuccess('Demo mode: Configure Supabase to enable real authentication');
+                    setTimeout(closeAuthModal, 2000);
+                    return;
+                }
+
+                const { data, error } = await supabase.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: {
+                            full_name: name
+                        }
+                    }
+                });
+
+                if (error) throw error;
+
+                if (data.user && !data.session) {
+                    // Email confirmation required
+                    showAuthSuccess('Check your email to confirm your account!');
+                } else {
+                    showAuthSuccess('Account created successfully!');
+                }
+            } catch (err) {
+                console.error('Signup error:', err);
+                showAuthError(err.message || 'Failed to create account');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Create Account';
+            }
+        });
+
+        // ============================================
+        // SOCIAL LOGIN HANDLER
+        // ============================================
+        async function handleSocialLogin(provider) {
+            try {
+                if (SUPABASE_URL === 'YOUR_SUPABASE_URL') {
+                    showAuthError('Configure Supabase to enable social login');
+                    return;
+                }
+
+                const { data, error } = await supabase.auth.signInWithOAuth({
+                    provider: provider,
+                    options: {
+                        redirectTo: window.location.origin
+                    }
+                });
+
+                if (error) throw error;
+            } catch (err) {
+                console.error('Social login error:', err);
+                showAuthError(err.message || 'Failed to login with ' + provider);
+            }
+        }
+
+        // ============================================
+        // FORGOT PASSWORD HANDLER
+        // ============================================
+        async function handleForgotPassword() {
+            const email = document.getElementById('login-email').value.trim();
+
+            if (!email) {
+                showAuthError('Enter your email address first');
+                return;
+            }
+
+            try {
+                if (SUPABASE_URL === 'YOUR_SUPABASE_URL') {
+                    showAuthSuccess('Demo mode: Configure Supabase for password reset');
+                    return;
+                }
+
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: window.location.origin + '/reset-password'
+                });
+
+                if (error) throw error;
+
+                showAuthSuccess('Password reset email sent!');
+            } catch (err) {
+                console.error('Password reset error:', err);
+                showAuthError(err.message || 'Failed to send reset email');
+            }
+        }
+
+        // ============================================
+        // SIGN OUT HANDLER
+        // ============================================
+        async function handleSignOut() {
+            try {
+                const { error } = await supabase.auth.signOut();
+                if (error) throw error;
+            } catch (err) {
+                console.error('Sign out error:', err);
+                showError('Failed to sign out');
+            }
+        }
+
+        // ============================================
+        // USER DROPDOWN
+        // ============================================
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('user-dropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const userMenu = document.getElementById('user-menu');
+            const dropdown = document.getElementById('user-dropdown');
+            if (userMenu && !userMenu.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        // ============================================
+        // CUSTOMER PORTAL (for subscription management)
+        // ============================================
+        async function openCustomerPortal() {
+            try {
+                if (!currentUser) {
+                    showError('Please sign in first');
+                    return;
+                }
+
+                const { data: { session } } = await supabase.auth.getSession();
+
+                const response = await fetch(`${SUPABASE_URL}/functions/v1/customer-portal`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session.access_token}`
+                    },
+                    body: JSON.stringify({
+                        returnUrl: window.location.href
+                    })
+                });
+
+                const data = await response.json();
+                if (data.url) {
+                    window.location.href = data.url;
+                } else if (data.error) {
+                    showError(data.error);
+                }
+            } catch (err) {
+                console.error('Portal error:', err);
+                showError('Unable to open subscription portal');
+            }
+        }
 
         // DOM Elements
         const form = document.getElementById('waitlist-form');
