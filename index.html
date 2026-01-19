@@ -610,42 +610,159 @@
         </div>
     </footer>
 
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <!-- JavaScript -->
     <script>
-        // Waitlist form handling
+        // ============================================
+        // SUPABASE CONFIGURATION
+        // Replace these with your Supabase project credentials
+        // ============================================
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';  // e.g., 'https://xxxxx.supabase.co'
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';  // Your anon/public key
+
+        // Initialize Supabase client
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // DOM Elements
         const form = document.getElementById('waitlist-form');
         const successMessage = document.getElementById('success-message');
         const waitlistCount = document.getElementById('waitlist-count');
+        const emailInput = document.getElementById('email');
+        const submitButton = form.querySelector('button[type="submit"]');
 
-        // Simulate loading existing count
-        let count = 247 + Math.floor(Math.random() * 50);
-        waitlistCount.textContent = count;
+        // ============================================
+        // WAITLIST COUNT
+        // ============================================
+        async function fetchWaitlistCount() {
+            try {
+                // Try to get count from Supabase function
+                const { data, error } = await supabase.rpc('get_waitlist_count');
 
+                if (error) throw error;
+
+                // Add base count for social proof (optional)
+                const baseCount = 247;
+                waitlistCount.textContent = (data || 0) + baseCount;
+            } catch (err) {
+                console.log('Using fallback count');
+                // Fallback if Supabase not configured yet
+                waitlistCount.textContent = 247 + Math.floor(Math.random() * 50);
+            }
+        }
+
+        // Load count on page load
+        fetchWaitlistCount();
+
+        // ============================================
+        // WAITLIST FORM SUBMISSION
+        // ============================================
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('email').value;
 
-            // Store in localStorage (for demo - replace with actual backend)
-            const waitlist = JSON.parse(localStorage.getItem('waitlist') || '[]');
-            if (!waitlist.includes(email)) {
-                waitlist.push(email);
-                localStorage.setItem('waitlist', JSON.stringify(waitlist));
+            const email = emailInput.value.trim();
+
+            // Disable button and show loading state
+            submitButton.disabled = true;
+            submitButton.innerHTML = `
+                <svg class="animate-spin h-5 w-5 inline mr-2" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                </svg>
+                Joining...
+            `;
+
+            try {
+                // Check if Supabase is configured
+                if (SUPABASE_URL === 'YOUR_SUPABASE_URL') {
+                    // Demo mode - store in localStorage
+                    const waitlist = JSON.parse(localStorage.getItem('waitlist') || '[]');
+                    if (!waitlist.includes(email)) {
+                        waitlist.push(email);
+                        localStorage.setItem('waitlist', JSON.stringify(waitlist));
+                    }
+                    console.log('Demo mode - Email stored locally:', email);
+                } else {
+                    // Production mode - submit to Supabase
+                    const { data, error } = await supabase
+                        .from('waitlist')
+                        .insert([
+                            {
+                                email: email,
+                                source: 'website',
+                                tier_interest: getSelectedTier(),
+                                referrer: document.referrer || null,
+                                user_agent: navigator.userAgent
+                            }
+                        ])
+                        .select();
+
+                    if (error) {
+                        // Handle duplicate email
+                        if (error.code === '23505') {
+                            showError('You\'re already on the waitlist!');
+                            return;
+                        }
+                        throw error;
+                    }
+
+                    console.log('Waitlist signup successful:', data);
+                }
+
+                // Show success message
+                form.classList.add('hidden');
+                successMessage.classList.remove('hidden');
+
+                // Update count
+                const currentCount = parseInt(waitlistCount.textContent) || 0;
+                waitlistCount.textContent = currentCount + 1;
+
+                // Track conversion (if analytics configured)
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'waitlist_signup', {
+                        event_category: 'engagement',
+                        event_label: email
+                    });
+                }
+
+            } catch (err) {
+                console.error('Waitlist signup error:', err);
+                showError('Something went wrong. Please try again.');
+            } finally {
+                // Re-enable button
+                submitButton.disabled = false;
+                submitButton.textContent = 'Join Waitlist';
             }
-
-            // Show success message
-            form.classList.add('hidden');
-            successMessage.classList.remove('hidden');
-
-            // Update count
-            count++;
-            waitlistCount.textContent = count;
-
-            // Log for demo purposes
-            console.log('Email submitted:', email);
-            console.log('Total waitlist:', waitlist);
         });
 
-        // Smooth scroll for anchor links
+        // ============================================
+        // HELPER FUNCTIONS
+        // ============================================
+        function getSelectedTier() {
+            // Check if user clicked from a specific pricing tier
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('tier') || 'free';
+        }
+
+        function showError(message) {
+            // Create error toast
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-pulse';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            // Remove after 3 seconds
+            setTimeout(() => toast.remove(), 3000);
+
+            // Re-enable form
+            submitButton.disabled = false;
+            submitButton.textContent = 'Join Waitlist';
+        }
+
+        // ============================================
+        // SMOOTH SCROLL
+        // ============================================
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -659,7 +776,9 @@
             });
         });
 
-        // Navbar scroll effect
+        // ============================================
+        // NAVBAR SCROLL EFFECT
+        // ============================================
         window.addEventListener('scroll', () => {
             const nav = document.querySelector('nav');
             if (window.scrollY > 50) {
@@ -667,6 +786,19 @@
             } else {
                 nav.classList.remove('bg-gallery-dark/95');
             }
+        });
+
+        // ============================================
+        // PRICING TIER TRACKING
+        // ============================================
+        document.querySelectorAll('#pricing a[href="#waitlist"]').forEach((link, index) => {
+            const tiers = ['free', 'premium', 'creator'];
+            link.addEventListener('click', () => {
+                // Add tier to URL for tracking
+                const url = new URL(window.location);
+                url.searchParams.set('tier', tiers[index]);
+                window.history.replaceState({}, '', url);
+            });
         });
     </script>
 </body>
