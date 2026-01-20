@@ -51,11 +51,16 @@ crashlytics-build.properties
 *.app
 *.ipa
 
-# Large Media (optional - uncomment to ignore)
-# *.mp4
-# *.mov
-# *.avi
-# *.mkv
+# Large Media
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.wav
+*.mp3
+*.blend
+*.fbx
+*.glb
 
 # Renders (optional - uncomment to ignore large renders)
 # renders/*.png

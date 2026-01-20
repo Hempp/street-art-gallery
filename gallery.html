@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10X Street Art Gallery | NFT Marketplace</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #000;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        #info {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.4);
+            font-size: 0.9rem;
+            letter-spacing: 0.1rem;
+            z-index: 50;
+        }
+
+        #title {
+            position: fixed;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 300;
+            letter-spacing: 0.5rem;
+            z-index: 50;
+        }
+
+        #sound-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            letter-spacing: 0.1rem;
+            z-index: 50;
+            transition: all 0.3s ease;
+        }
+
+        #sound-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Wallet Connect Button */
+        #wallet-btn {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.05rem;
+            z-index: 100;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #wallet-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        #wallet-btn.connected {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        /* Art Info Panel */
+        #art-panel {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 1.5rem 2rem;
+            z-index: 100;
+            min-width: 350px;
+            opacity: 0;
+            transition: all 0.4s ease;
+            pointer-events: none;
+        }
+
+        #art-panel.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #art-panel .art-title {
+            color: white;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        #art-panel .art-artist {
+            color: #667eea;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        #art-panel .art-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        #art-panel .art-price {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        #art-panel .art-price span {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        #art-panel .art-edition {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.85rem;
+        }
+
+        #buy-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        #buy-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        #buy-btn:disabled {
+            background: #444;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Collection Stats */
+        #stats {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 1rem 1.5rem;
+            z-index: 100;
+        }
+
+        #stats .stat-row {
+            display: flex;
+            gap: 2rem;
+        }
+
+        #stats .stat {
+            text-align: center;
+        }
+
+        #stats .stat-value {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        #stats .stat-label {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1rem;
+        }
+
+        /* Toast Notification */
+        #toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 2rem 3rem;
+            z-index: 200;
+            text-align: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        #toast.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #toast.success {
+            border-color: #38ef7d;
+        }
+
+        #toast h3 {
+            color: white;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        #toast p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.95rem;
+        }
+
+        /* Pause/Play Tour */
+        #tour-btn {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            z-index: 50;
+            transition: all 0.3s ease;
+        }
+
+        #tour-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div id="title">STREET ART GALLERY</div>
+    <div id="info">NFT Collection</div>
+
+    <!-- Wallet Connect -->
+    <button id="wallet-btn" onclick="connectWallet()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/>
+            <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>
+        </svg>
+        Connect Wallet
+    </button>
+
+    <!-- Collection Stats -->
+    <div id="stats">
+        <div class="stat-row">
+            <div class="stat">
+                <div class="stat-value">24</div>
+                <div class="stat-label">Artworks</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">12</div>
+                <div class="stat-label">Artists</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="floor-price">0.5 ETH</div>
+                <div class="stat-label">Floor</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Art Info Panel -->
+    <div id="art-panel">
+        <div class="art-title" id="panel-title">Urban Dreams</div>
+        <div class="art-artist" id="panel-artist">by @StreetKing</div>
+        <div class="art-details">
+            <div class="art-price" id="panel-price">1.2 ETH <span>($2,400)</span></div>
+            <div class="art-edition" id="panel-edition">Edition 1 of 1</div>
+        </div>
+        <button id="buy-btn" onclick="buyNFT()">Buy Now</button>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast">
+        <h3 id="toast-title">Success!</h3>
+        <p id="toast-message">Transaction complete</p>
+    </div>
+
+    <!-- Controls -->
+    <button id="tour-btn" onclick="toggleTour()">PAUSE TOUR</button>
+    <button id="sound-btn" onclick="toggleSound()">CLICK FOR MUSIC</button>
+
+    <audio id="bg-music" loop>
+        <source src="https://cdn.pixabay.com/audio/2022/10/25/audio_946bc0c03a.mp3" type="audio/mpeg">
+    </audio>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        // Scene
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x1a1a1a);
+
+        // Camera
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 500);
+        camera.position.set(0, 1.7, 48);
+
+        // Renderer
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.0;
+        document.body.appendChild(renderer.domElement);
+
+        const textureLoader = new THREE.TextureLoader();
+
+        // Materials
+        const floorMat = new THREE.MeshStandardMaterial({ color: 0x3a3a3a, roughness: 0.9 });
+        const wallMat = new THREE.MeshStandardMaterial({ color: 0x4a4a4a, roughness: 0.85 });
+        const ceilMat = new THREE.MeshStandardMaterial({ color: 0x2a2a2a });
+
+        // Main Hall
+        function createMainHall() {
+            const floor = new THREE.Mesh(new THREE.PlaneGeometry(20, 100), floorMat);
+            floor.rotation.x = -Math.PI / 2;
+            floor.receiveShadow = true;
+            scene.add(floor);
+
+            const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(20, 100), ceilMat);
+            ceiling.rotation.x = Math.PI / 2;
+            ceiling.position.y = 8;
+            scene.add(ceiling);
+
+            const leftWall = new THREE.Mesh(new THREE.PlaneGeometry(100, 8), wallMat);
+            leftWall.position.set(-10, 4, 0);
+            leftWall.rotation.y = Math.PI / 2;
+            scene.add(leftWall);
+
+            const rightWall = new THREE.Mesh(new THREE.PlaneGeometry(100, 8), wallMat);
+            rightWall.position.set(10, 4, 0);
+            rightWall.rotation.y = -Math.PI / 2;
+            scene.add(rightWall);
+
+            const backWall = new THREE.Mesh(new THREE.PlaneGeometry(20, 8), wallMat);
+            backWall.position.set(0, 4, 50);
+            backWall.rotation.y = Math.PI;
+            scene.add(backWall);
+
+            const frontWall = new THREE.Mesh(new THREE.PlaneGeometry(20, 8), wallMat);
+            frontWall.position.set(0, 4, -50);
+            scene.add(frontWall);
+        }
+
+        // Street Art NFT Collection - 24 pieces with metadata
+        const streetArt = [
+            // Left wall
+            { id: 1, url: "https://images.unsplash.com/photo-1569017388730-020b5f80a004?w=1200", x: -9.9, z: 42, side: 'left', title: "Urban Pulse", artist: "BANKSY_NYC", price: 2.5, edition: "1/1" },
+            { id: 2, url: "https://images.unsplash.com/photo-1541356665065-22676f35dd40?w=1200", x: -9.9, z: 34, side: 'left', title: "Neon Dreams", artist: "StreetKing", price: 1.8, edition: "1/1" },
+            { id: 3, url: "https://images.unsplash.com/photo-1555680202-c86f0e12f086?w=1200", x: -9.9, z: 26, side: 'left', title: "Chaos Theory", artist: "SprayQueen", price: 3.2, edition: "1/1" },
+            { id: 4, url: "https://images.unsplash.com/photo-1557672172-298e090bd0f1?w=1200", x: -9.9, z: 18, side: 'left', title: "Abstract Mind", artist: "ColorRiot", price: 1.5, edition: "1/3" },
+            { id: 5, url: "https://images.unsplash.com/photo-1579762715118-a6f1d4b934f1?w=1200", x: -9.9, z: 10, side: 'left', title: "City Lights", artist: "MuralMaster", price: 2.1, edition: "1/1" },
+            { id: 6, url: "https://images.unsplash.com/photo-1578301978018-3005759f48f7?w=1200", x: -9.9, z: 2, side: 'left', title: "Digital Soul", artist: "PixelPunk", price: 4.0, edition: "1/1" },
+            { id: 7, url: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200", x: -9.9, z: -6, side: 'left', title: "Street Code", artist: "GraffitiGod", price: 1.2, edition: "1/5" },
+            { id: 8, url: "https://images.unsplash.com/photo-1561059488-916d69792237?w=1200", x: -9.9, z: -14, side: 'left', title: "Urban Legend", artist: "WallWhisper", price: 2.8, edition: "1/1" },
+            { id: 9, url: "https://images.unsplash.com/photo-1567095761054-7a02e69e5c43?w=1200", x: -9.9, z: -22, side: 'left', title: "Concrete Canvas", artist: "BANKSY_NYC", price: 5.5, edition: "1/1" },
+            { id: 10, url: "https://images.unsplash.com/photo-1552913902-226d10054203?w=1200", x: -9.9, z: -30, side: 'left', title: "Revolution Art", artist: "RebelBrush", price: 1.9, edition: "1/2" },
+            { id: 11, url: "https://images.unsplash.com/photo-1551913902-c04eb302e995?w=1200", x: -9.9, z: -38, side: 'left', title: "Spray Dreams", artist: "AerosolKing", price: 2.3, edition: "1/1" },
+            { id: 12, url: "https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?w=1200", x: -9.9, z: -46, side: 'left', title: "Wall Poetry", artist: "StreetPoet", price: 1.7, edition: "1/1" },
+            // Right wall
+            { id: 13, url: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=1200", x: 9.9, z: 42, side: 'right', title: "Festival Vibes", artist: "NeonNinja", price: 2.0, edition: "1/1" },
+            { id: 14, url: "https://images.unsplash.com/photo-1501472312651-726afe119ff1?w=1200", x: 9.9, z: 34, side: 'right', title: "Color Explosion", artist: "SprayQueen", price: 3.5, edition: "1/1" },
+            { id: 15, url: "https://images.unsplash.com/photo-1487452066049-a710f7296400?w=1200", x: 9.9, z: 26, side: 'right', title: "Urban Safari", artist: "WildStyle", price: 2.7, edition: "1/1" },
+            { id: 16, url: "https://images.unsplash.com/photo-1495555961986-6d4c1ecb7be3?w=1200", x: 9.9, z: 18, side: 'right', title: "Midnight Mural", artist: "NightOwl", price: 1.4, edition: "1/3" },
+            { id: 17, url: "https://images.unsplash.com/photo-1515405295579-ba7b45403062?w=1200", x: 9.9, z: 10, side: 'right', title: "Electric Dreams", artist: "VoltArt", price: 2.2, edition: "1/1" },
+            { id: 18, url: "https://images.unsplash.com/photo-1531746790731-6c087fecd65a?w=1200", x: 9.9, z: 2, side: 'right', title: "Graffiti Genesis", artist: "OriginalSin", price: 6.0, edition: "1/1" },
+            { id: 19, url: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=1200", x: 9.9, z: -6, side: 'right', title: "Paint Paradise", artist: "ColorRiot", price: 1.6, edition: "1/2" },
+            { id: 20, url: "https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?w=1200", x: 9.9, z: -14, side: 'right', title: "Street Symphony", artist: "MuralMaster", price: 3.8, edition: "1/1" },
+            { id: 21, url: "https://images.unsplash.com/photo-1580136607875-1be101371917?w=1200", x: 9.9, z: -22, side: 'right', title: "Urban Rhythm", artist: "BeatBox", price: 2.4, edition: "1/1" },
+            { id: 22, url: "https://images.unsplash.com/photo-1571115764595-644a1f56a55c?w=1200", x: 9.9, z: -30, side: 'right', title: "Concrete Dreams", artist: "StreetKing", price: 1.8, edition: "1/1" },
+            { id: 23, url: "https://images.unsplash.com/photo-1459411552884-841db9b3cc2a?w=1200", x: 9.9, z: -38, side: 'right', title: "Neon Nights", artist: "GlowMaster", price: 2.9, edition: "1/1" },
+            { id: 24, url: "https://images.unsplash.com/photo-1494232410401-ad00d5433cfa?w=1200", x: 9.9, z: -46, side: 'right', title: "Audio Visual", artist: "SoundWave", price: 1.3, edition: "1/5" },
+        ];
+
+        // Track artwork groups for proximity detection
+        const artworkGroups = [];
+
+        function addArtwork() {
+            streetArt.forEach((art, index) => {
+                const frame = new THREE.Mesh(
+                    new THREE.BoxGeometry(5.5, 5.5, 0.15),
+                    new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.5, roughness: 0.5 })
+                );
+
+                const canvas = new THREE.Mesh(
+                    new THREE.PlaneGeometry(5, 5),
+                    new THREE.MeshStandardMaterial({ color: 0x333333 })
+                );
+
+                textureLoader.load(art.url, (tex) => {
+                    tex.colorSpace = THREE.SRGBColorSpace;
+                    canvas.material.map = tex;
+                    canvas.material.color.set(0xffffff);
+                    canvas.material.needsUpdate = true;
+                });
+
+                const group = new THREE.Group();
+                group.userData = { artIndex: index, ...art };
+                group.add(frame);
+                canvas.position.z = 0.08;
+                group.add(canvas);
+                group.position.set(art.x, 3.5, art.z);
+                group.rotation.y = art.side === 'left' ? Math.PI / 2 : -Math.PI / 2;
+                scene.add(group);
+                artworkGroups.push(group);
+
+                // Spotlight
+                const spot = new THREE.SpotLight(0xffffff, 5, 15, 0.5, 0.5, 1.5);
+                spot.position.set(
+                    art.side === 'left' ? art.x + 4 : art.x - 4,
+                    7,
+                    art.z
+                );
+                spot.target = group;
+                scene.add(spot);
+            });
+        }
+
+        function setupLighting() {
+            scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+            for (let z = -45; z <= 45; z += 10) {
+                const light = new THREE.PointLight(0xffffff, 1.2, 25);
+                light.position.set(0, 7.5, z);
+                scene.add(light);
+            }
+        }
+
+        // Build
+        createMainHall();
+        addArtwork();
+        setupLighting();
+
+        // Art Panel UI
+        const artPanel = document.getElementById('art-panel');
+        const panelTitle = document.getElementById('panel-title');
+        const panelArtist = document.getElementById('panel-artist');
+        const panelPrice = document.getElementById('panel-price');
+        const panelEdition = document.getElementById('panel-edition');
+        const buyBtn = document.getElementById('buy-btn');
+
+        let currentArt = null;
+        let ethPrice = 2000; // Approximate ETH/USD
+
+        function updateArtPanel(art) {
+            if (art) {
+                panelTitle.textContent = art.title;
+                panelArtist.textContent = `by @${art.artist}`;
+                const usdPrice = (art.price * ethPrice).toLocaleString();
+                panelPrice.innerHTML = `${art.price} ETH <span>($${usdPrice})</span>`;
+                panelEdition.textContent = `Edition ${art.edition}`;
+                artPanel.classList.add('visible');
+                currentArt = art;
+            } else {
+                artPanel.classList.remove('visible');
+                currentArt = null;
+            }
+        }
+
+        // Find nearest artwork to camera
+        function findNearestArt() {
+            let nearest = null;
+            let minDist = 8; // Detection range
+
+            artworkGroups.forEach(group => {
+                const dist = camera.position.distanceTo(group.position);
+                if (dist < minDist) {
+                    minDist = dist;
+                    nearest = group.userData;
+                }
+            });
+
+            return nearest;
+        }
+
+        // Automatic camera tour
+        let time = 0;
+        let tourPaused = false;
+        const tourSpeed = 0.08;
+        const startZ = 48;
+        const endZ = -48;
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (!tourPaused) {
+                time += 0.016;
+                const progress = (time * tourSpeed) % 1;
+                camera.position.z = startZ - (startZ - endZ) * progress;
+
+                const lookOffset = Math.sin(time * 0.3) * 3;
+                camera.lookAt(lookOffset, 2.5, camera.position.z - 10);
+
+                if (camera.position.z <= endZ) {
+                    time = 0;
+                    camera.position.z = startZ;
+                }
+            }
+
+            // Update art panel based on proximity
+            const nearestArt = findNearestArt();
+            updateArtPanel(nearestArt);
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Tour toggle
+        const tourBtn = document.getElementById('tour-btn');
+        window.toggleTour = function() {
+            tourPaused = !tourPaused;
+            tourBtn.textContent = tourPaused ? 'RESUME TOUR' : 'PAUSE TOUR';
+        };
+
+        // Sound toggle
+        const music = document.getElementById('bg-music');
+        const soundBtn = document.getElementById('sound-btn');
+        let isPlaying = false;
+
+        window.toggleSound = function() {
+            if (isPlaying) {
+                music.pause();
+                soundBtn.textContent = 'CLICK FOR MUSIC';
+                isPlaying = false;
+            } else {
+                music.volume = 0.4;
+                music.play();
+                soundBtn.textContent = 'MUSIC ON';
+                isPlaying = true;
+            }
+        };
+
+        // Wallet connection
+        let walletAddress = null;
+        const walletBtn = document.getElementById('wallet-btn');
+
+        window.connectWallet = async function() {
+            if (walletAddress) {
+                // Already connected, show address
+                showToast('Wallet Connected', `${walletAddress.slice(0,6)}...${walletAddress.slice(-4)}`);
+                return;
+            }
+
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    walletAddress = accounts[0];
+                    walletBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> ${walletAddress.slice(0,6)}...${walletAddress.slice(-4)}`;
+                    walletBtn.classList.add('connected');
+                    buyBtn.disabled = false;
+                    showToast('Wallet Connected!', 'Ready to collect NFTs');
+                } catch (error) {
+                    showToast('Connection Failed', error.message);
+                }
+            } else {
+                showToast('MetaMask Required', 'Please install MetaMask to buy NFTs');
+                window.open('https://metamask.io/download/', '_blank');
+            }
+        };
+
+        // Buy NFT
+        window.buyNFT = async function() {
+            if (!walletAddress) {
+                connectWallet();
+                return;
+            }
+
+            if (!currentArt) return;
+
+            try {
+                buyBtn.textContent = 'Processing...';
+                buyBtn.disabled = true;
+
+                // Simulate transaction (replace with real contract call)
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const signer = provider.getSigner();
+
+                // For demo: just show success after delay
+                // In production: call NFT contract mint/buy function
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                showToast('NFT Purchased!', `"${currentArt.title}" is now in your wallet`, 'success');
+                buyBtn.textContent = 'SOLD';
+
+            } catch (error) {
+                showToast('Transaction Failed', error.message);
+                buyBtn.textContent = 'Buy Now';
+                buyBtn.disabled = false;
+            }
+        };
+
+        // Toast notifications
+        const toast = document.getElementById('toast');
+        const toastTitle = document.getElementById('toast-title');
+        const toastMessage = document.getElementById('toast-message');
+
+        function showToast(title, message, type = '') {
+            toastTitle.textContent = title;
+            toastMessage.textContent = message;
+            toast.className = 'visible' + (type ? ` ${type}` : '');
+
+            setTimeout(() => {
+                toast.className = '';
+            }, 3000);
+        }
+
+        // Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
